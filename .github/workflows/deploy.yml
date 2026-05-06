@@ -17,8 +17,25 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd ~/production-projects/apps/shipproof
-            git pull origin main
+            echo "🚀 DEPLOY START"
+
+            cd ~/production-projects/apps/shipproof || exit 1
+
+            echo "📌 Current commit BEFORE:"
+            git rev-parse HEAD
+
+            echo "🔄 Fetching latest..."
+            git fetch origin main
+
+            echo "📥 Resetting to origin/main..."
+            git reset --hard origin/main
+
+            echo "📌 Current commit AFTER:"
+            git rev-parse HEAD
+
+            echo "🧹 Rebuilding containers..."
             docker-compose down
             docker-compose build --no-cache
             docker-compose up -d
+
+            echo "✅ DEPLOY COMPLETE"
