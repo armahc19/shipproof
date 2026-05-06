@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  backend:
+    build: ./backend
+    container_name: shipproof-backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://scriptgad:password123@db:5432/progress_pulse
+    restart: always
+
+  frontend:
+    build: ./progress-pulse
+    container_name: shipproof-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: always
+
+  db:
+    image: postgres:16
+    container_name: shipproof-db
+    restart: always
+    environment:
+      POSTGRES_USER: scriptgad
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: progress_pulse
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

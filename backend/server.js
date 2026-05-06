@@ -26,7 +26,11 @@ const {
 const app = express();
 
 app.use(cors({
-  origin: ['http://localhost:8080', 'http://localhost:5173', 'http://127.0.0.1:8080'],
+  origin: [
+    'http://localhost:8080',
+    'http://localhost:5173',
+    'http://153.75.244.15:3000'
+  ],
   credentials: true
 }));
 
@@ -59,7 +63,7 @@ function authMiddleware(req, res, next) {
 app.get('/auth/github', (req, res) => {
   const client_id = process.env.GITHUB_CLIENT_ID;
 
-  const redirect_uri = `http://localhost:${process.env.PORT || 3000}/auth/github/callback`;
+  const redirect_uri = `${process.env.BASE_URL}/auth/github/callback`;
 
   res.redirect(
     `https://github.com/login/oauth/authorize?client_id=${client_id}&redirect_uri=${redirect_uri}&scope=repo,read:org`
@@ -118,7 +122,7 @@ app.get('/auth/github/callback', async (req, res) => {
     );
 
     // redirect to frontend with token
-    res.redirect(`http://localhost:8080/dashboard?token=${token}`);
+    res.redirect(`${process.env.FRONTEND_URL}/dashboard?token=${token}`);
 
   } catch (err) {
     console.error(err);
