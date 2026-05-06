@@ -1,0 +1,24 @@
+name: Deploy ShipProof
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ~/production-projects/apps/shipproof
+            git pull origin main
+            docker-compose down
+            docker-compose build --no-cache
+            docker-compose up -d
