@@ -10,15 +10,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Debug Secrets
+        run: |
+          echo "VPS_HOST length      : ${{ secrets.VPS_HOST != '' }}"
+          echo "VPS_USER length      : ${{ secrets.VPS_USER != '' }}"
+          echo "SSH_PRIVATE_KEY length: ${{ secrets.SSH_PRIVATE_KEY != '' }}"
+
       - name: Deploy to VPS via SSH
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@master        # ← Updated to latest
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          timeout: 30s
+          command_timeout: 15m
           script: |
             echo "🚀 DEPLOY START"
-
             cd ~/production-projects/apps/shipproof || exit 1
 
             echo "📌 Current commit BEFORE:"
